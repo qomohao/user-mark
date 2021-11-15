@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户编码生成器</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.0.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .container {
+            padding: 30px 20px;
+        }
+
+        .form-group {
+            margin: 20px 0;
+        }
+
+        #result-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 0;
+            
+        }
+        #result {
+            margin-top: 10px;
+        }
+
+        label {
+            margin: 5px 0;
+        }
+
+        .copy {}
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>小道编码生成器</h2>
+        <form>
+            <div class="form-group">
+                <label for="city">城市:</label>
+                <input type="text" class="form-control" id="city" placeholder="城市编码，例（郑州：A）" value="A">
+            </div>
+            <div class="form-group">
+                <label for="wechat">微信号:</label>
+                <input type="text" class="form-control" id="wechat" placeholder="引流微信号" value="1">
+            </div>
+            <div class="form-group">
+                <label>性别:</label>
+                <div>
+                    <label class="radio-inline"><input type="radio" name="sexradio" value="B"> 男</label>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <label class="radio-inline"><input type="radio" name="sexradio" value="G"> 女</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="birthday">出生年月:</label>
+                <input type="date" class="form-control" id="birthday" placeholder="请选择出生年月">
+            </div>
+            <div class="form-group">
+                <label for="height">身高:</label>
+                <input type="number" class="form-control" id="height" placeholder="请输入身高（单位：CM）">
+            </div>
+            <div class="form-group">
+                <label>来源:</label>
+                <select class="form-control" id="sourceType">
+                    <option>CXD</option>
+                    <option>DMY</option>
+                </select>
+            </div>
+        </form>
+        <button type="btn" class="btn btn-primary" onclick="getParams()">编码生成</button>
+        <div id="result-box" style="display:none">
+            <div>
+                用户Id：
+                <input type="text" class="form-control" id="result" style="display:block">
+            </div>
+            <!-- <button class="btn btn-success copy-btn" data-clipboard-target="#result">复制结果</button> -->
+        </div>
+    </div>
+</body>
+
+</html>
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.0.2/js/bootstrap.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
+<script>
+    // var copyTxt = null
+    // var clipboard = new Clipboard('.copy-btn')
+    // clipboard.on('success', function(e) {
+    //     alert('复制成功！')
+    // })
+    // clipboard.on('error', function(e) {
+    //     alert('复制失败！')
+    // })
+    function getParams() {
+        let city = $('#city').val()
+        let wechat = $('#wechat').val()
+        let sex = $('input[name=sexradio]:checked').val()
+        let birthday = $('#birthday').val().substring(2, 4)
+        let height = $('#height').val().substring(1, 3)
+        let randomStr = randomString()
+        let source = $('#sourceType').val()
+        let result = {
+            city,
+            wechat,
+            sex,
+            birthday,
+            height,
+            randomStr,
+            source
+        }
+        if (!city || !wechat || !sex || !birthday || !height || !randomStr || !source) {
+            alert('缺少必要参数！')
+        } else {
+            copyTxt = `${city}${wechat}-${sex}${birthday}${height}-${randomStr}-${source}`
+            console.log(copyTxt)
+            $('#result').val(copyTxt)
+            $('#result-box').css('display','block')
+        }
+    }
+
+    // A1-B9670-0001-DMY
+    // A 城市（郑州）
+    // 1 微信号
+    // B Boy
+    // 96 出生年
+    // 70 身高170 
+    // 0001 身份ID 随机码位置
+    // DMY  都蜜月奶茶
+    // 用户唯一标识 随机码部分
+    function randomString() {
+        let len = 3 // 随机字符串长度
+        let t = String(Date.now())
+        let timestamp = t.substr(
+            t.length - 5,
+            t.length
+        )
+        /****
+         * 默认去掉了容易混淆的字符oOLl,9gq,Vv,Uu,I1
+         * **
+         * **/
+        let $chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678'
+        let maxPos = $chars.length
+        let randomStr = ''
+        for (let i = 0; i < len; i++) {
+            randomStr += $chars.charAt(Math.floor(Math.random() * maxPos))
+        }
+        return randomStr + timestamp
+    }
+</script>
